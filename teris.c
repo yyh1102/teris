@@ -104,7 +104,7 @@ void draw_map()
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(X0-1,Y0-1,X0+320,Y0+640);
 	setcolor(YELLOW);
-	rectangle(X0-2,Y0-2,X0+320+1,Y0+640+1);
+	rectangle(X0-1,Y0-1,X0+320,Y0+640);
 	setcolor(WHITE);
 	outtextxy(X0+400,Y0+320,"score:");
 }
@@ -123,7 +123,7 @@ void show_block(block t)
 		setfillstyle(SOLID_FILL,t.color);
 		bar(x,y,x+BSIZE-1,y+BSIZE-1);
 		setcolor(BLACK);
-		rectangle(x-1,y-1,x+BSIZE,y+BSIZE);
+		rectangle(x,y,x+BSIZE-1,y+BSIZE-1);
 	}
 }
 
@@ -140,7 +140,7 @@ void clear_block(block t)
 		setfillstyle(SOLID_FILL,DARKGRAY);
 		bar(x,y,x+BSIZE-1,y+BSIZE-1);
 		setcolor(DARKGRAY);
-		rectangle(x-1,y-1,x+BSIZE,y+BSIZE);
+		rectangle(x,y,x+BSIZE-1,y+BSIZE-1);
 	}
 }
 
@@ -206,13 +206,13 @@ void delete_last(int bottom)
 {
 	int i,j,time=0;
 	struct picture *p;
-	p = (struct picture *)malloc(imagesize(X0-1,Y0-1,X0+320,Y0+(bottom)*STEP-1));
+	p = (struct picture *)malloc(imagesize(X0,Y0,X0+320-2,Y0+(bottom)*STEP-1));
 	if(p)
 	{
-		getimage(X0-1,Y0-1,X0+320,Y0+(bottom)*STEP-1,p);
+		getimage(X0,Y0,X0+320-2,Y0+(bottom)*STEP-1,p);
 		setfillstyle(SOLID_FILL,DARKGRAY);
-		bar(X0-1,Y0-1,X0+320,Y0+STEP);
-		putimage(X0-1,Y0+STEP,p,COPY_PUT);
+		bar(X0,Y0,X0+320-1,Y0+STEP);
+		putimage(X0,Y0+STEP,p,COPY_PUT);
 	}
 	for (i=bottom; i>0 ;i-- )
 	{
@@ -295,14 +295,12 @@ void main()
 				if(check_xy(bl)==3)
 				{
 					bl.y--;
+					check_gameover();
 					show_block(bl);
 					while(cover())
 					{
 						delete_last(cover());
-						if(score==0)
-							score=100;
-						else
-							score*=2;
+						score+=100;
 						setfillstyle(SOLID_FILL,BLACK);
 						bar(X0+460,Y0+300,X0+520,Y0+340);
 						itoa(score,ss,10);
@@ -323,14 +321,12 @@ void main()
 					if(key==DOWN)
 					{
 						bl.y--;
+						check_gameover();
 						show_block(bl);
 						while(cover())
 						{
 							delete_last(cover());
-							if(score==0)
-								score=100;
-							else
-								score*=2;
+							score+=100;
 							setfillstyle(SOLID_FILL,BLACK);
 							bar(X0+460,Y0+300,X0+520,Y0+340);
 							itoa(score,ss,10);
@@ -341,6 +337,7 @@ void main()
 						check_gameover();
 					}
 				}
+				check_gameover();
 				show_block(bl);
 			}
 		}
@@ -349,14 +346,12 @@ void main()
 		if(check_xy(bl)==3 || check_collision(bl))
 		{
 			bl.y--;
+			check_gameover();
 			show_block(bl);
 			while(cover())
 			{
 				delete_last(cover());
-				if(score==0)
-					score=100;
-				else
-					score*=2;
+				score+=100;
 				setfillstyle(SOLID_FILL,BLACK);
 				bar(X0+460,Y0+300,X0+520,Y0+340);
 				itoa(score,ss,10);

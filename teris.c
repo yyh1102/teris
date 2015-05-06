@@ -10,6 +10,7 @@
 #define LEFT 0x4B00
 #define RIGHT 0x4D00
 #define ESC 0x011B
+#define SPACE 0x3920
 #define STEP 32
 #define dtime 1
 
@@ -248,7 +249,7 @@ void check_gameover()
 
 void main()
 {
-	int driver=0,mode=VESA_1024x768x8bit;
+	int driver=0,mode=VESA_1024x768x8bit,paused=0;
 	char *p;
 	block bl;
 	int key,n=1;
@@ -261,6 +262,8 @@ void main()
 	init_block(&bl);
 	itoa(score,ss,10);
 	outtextxy(X0+470,Y0+320,ss);
+	outtextxy(X0+397,Y0+220,"Press spacebar to pause");
+	outtextxy(X0+397,Y0+270,"Press spacebar agian to continue");
 	while(!stop)
 	{
 		show_block(bl);
@@ -284,7 +287,19 @@ void main()
 					case RIGHT:bl.x++;break;
 					case DOWN:bl.y++;break;
 					case ESC:stop=1;break;
+					case SPACE:show_block(bl);paused=1;break;
 					default:break;
+				}
+				while(paused){
+					if(bioskey(1)!=0)
+					{
+						if(bioskey(0)==SPACE)
+						{
+							clear_block(bl);
+							paused=0;
+						    break;
+						}
+					}
 				}
 				if(bl.rotate>3 || bl.rotate<0)
 					bl.rotate=0;
